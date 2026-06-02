@@ -1,0 +1,311 @@
+===== PROJECT INFO =====
+/data/data/com.termux/files/home/app
+total 533
+drwx------.   8 u0_a526 u0_a526   3452 Jun  2 12:30 .
+drwx------.   6 u0_a526 u0_a526   3452 Jun  2 12:30 ..
+-rw-------.   1 u0_a526 u0_a526    144 Jun  1 23:41 .backend-features.json
+-rw-------.   1 u0_a526 u0_a526     35 Jun  1 23:41 .dockerignore
+-rw-------.   1 u0_a526 u0_a526    233 Jun  2 00:44 .env
+-rw-------.   1 u0_a526 u0_a526   1365 Jun  1 23:41 .env.example
+drwx------.   7 u0_a526 u0_a526   3452 Jun  1 23:41 .git
+-rw-------.   1 u0_a526 u0_a526     41 Jun  1 23:41 .gitignore
+-rw-------.   1 u0_a526 u0_a526    310 Jun  1 23:41 .prettierignore
+-rw-------.   1 u0_a526 u0_a526    310 Jun  1 23:41 .prettierrc
+-rw-------.   1 u0_a526 u0_a526   2555 Jun  1 23:41 README.md
+drwx------.   6 u0_a526 u0_a526   3452 Jun  1 23:41 api
+-rw-------.   1 u0_a526 u0_a526    461 Jun  1 23:41 components.json
+drwx------.   2 u0_a526 u0_a526   3452 Jun  1 23:41 contracts
+drwx------.   2 u0_a526 u0_a526   3452 Jun  1 23:41 db
+-rw-------.   1 u0_a526 u0_a526    378 Jun  1 23:41 drizzle.config.ts
+-rw-------.   1 u0_a526 u0_a526    616 Jun  1 23:41 eslint.config.js
+-rw-------.   1 u0_a526 u0_a526    300 Jun  1 23:41 index.html
+-rw-------.   1 u0_a526 u0_a526   1385 Jun  1 23:41 info.md
+drwx------. 318 u0_a526 u0_a526  20480 Jun  1 23:44 node_modules
+-rw-------.   1 u0_a526 u0_a526 409275 Jun  1 23:42 package-lock.json
+-rw-------.   1 u0_a526 u0_a526   3601 Jun  1 23:41 package.json
+-rw-------.   1 u0_a526 u0_a526     80 Jun  1 23:41 postcss.config.js
+-rw-------.   1 u0_a526 u0_a526     62 Jun  2 12:30 report.txt
+drwx------.   7 u0_a526 u0_a526   3452 Jun  1 23:41 src
+-rw-------.   1 u0_a526 u0_a526   2777 Jun  1 23:41 tailwind.config.js
+-rw-------.   1 u0_a526 u0_a526    930 Jun  1 23:41 tsconfig.app.json
+-rw-------.   1 u0_a526 u0_a526    401 Jun  1 23:41 tsconfig.json
+-rw-------.   1 u0_a526 u0_a526    653 Jun  1 23:41 tsconfig.node.json
+-rw-------.   1 u0_a526 u0_a526    616 Jun  1 23:41 tsconfig.server.json
+-rw-------.   1 u0_a526 u0_a526    810 Jun  1 23:41 vite.config.ts
+-rw-------.   1 u0_a526 u0_a526    489 Jun  1 23:41 vitest.config.ts
+
+===== PACKAGE =====
+{
+  "name": "my-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && esbuild api/boot.ts --platform=node --bundle --format=esm --outdir=dist --banner:js=\"import { createRequire } from 'module';const require = createRequire(import.meta.url);\"",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "start": "NODE_ENV=production node dist/boot.js",
+    "check": "tsc -b",
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "@radix-ui/react-accordion": "^1.2.12",
+    "@radix-ui/react-alert-dialog": "^1.1.15",
+    "@radix-ui/react-aspect-ratio": "^1.1.8",
+    "@radix-ui/react-avatar": "^1.1.11",
+    "@radix-ui/react-checkbox": "^1.3.3",
+    "@radix-ui/react-collapsible": "^1.1.12",
+    "@radix-ui/react-context-menu": "^2.2.16",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
+    "@radix-ui/react-hover-card": "^1.1.15",
+    "@radix-ui/react-label": "^2.1.8",
+    "@radix-ui/react-menubar": "^1.1.16",
+    "@radix-ui/react-navigation-menu": "^1.2.14",
+    "@radix-ui/react-popover": "^1.1.15",
+    "@radix-ui/react-progress": "^1.1.8",
+    "@radix-ui/react-radio-group": "^1.3.8",
+    "@radix-ui/react-scroll-area": "^1.2.10",
+    "@radix-ui/react-select": "^2.2.6",
+    "@radix-ui/react-separator": "^1.1.8",
+    "@radix-ui/react-slider": "^1.3.6",
+    "@radix-ui/react-slot": "^1.2.4",
+    "@radix-ui/react-switch": "^1.2.6",
+    "@radix-ui/react-tabs": "^1.1.13",
+    "@radix-ui/react-toggle": "^1.1.10",
+    "@radix-ui/react-toggle-group": "^1.1.11",
+    "@radix-ui/react-tooltip": "^1.2.8",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "date-fns": "^4.1.0",
+    "embla-carousel-react": "^8.6.0",
+    "input-otp": "^1.4.2",
+    "lucide-react": "^0.562.0",
+    "next-themes": "^0.4.6",
+    "react": "^19.2.0",
+    "react-day-picker": "^9.13.0",
+    "react-dom": "^19.2.0",
+    "react-router": "^7.6.1",
+    "react-hook-form": "^7.70.0",
+    "react-resizable-panels": "^4.2.2",
+    "recharts": "^2.15.4",
+    "sonner": "^2.0.7",
+    "tailwind-merge": "^3.4.0",
+    "vaul": "^1.1.2",
+    "zod": "^4.3.5",
+    "@tanstack/react-query": "^5.90.16",
+    "@trpc/client": "^11.8.1",
+    "@trpc/react-query": "^11.8.1",
+    "@trpc/server": "^11.8.1",
+    "dotenv": "^17.2.3",
+    "hono": "^4.8.3",
+    "@hono/node-server": "^1.14.3",
+    "superjson": "^2.2.6",
+    "drizzle-orm": "^0.45.1",
+    "mysql2": "^3.14.1",
+    "@aws-sdk/client-s3": "^3.965.0",
+    "@aws-sdk/s3-request-presigner": "^3.965.0",
+    "cookie": "^1.1.1",
+    "jose": "6.1.3",
+    "nanoid": "^5.1.6"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.5",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "autoprefixer": "^10.4.23",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "kimi-plugin-inspect-react": "^1.0.3",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.19",
+    "tailwindcss-animate": "^1.0.7",
+    "tw-animate-css": "^1.4.0",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.46.4",
+    "vite": "^7.2.4",
+    "@hono/vite-dev-server": "^0.19.0",
+    "esbuild": "^0.27.2",
+    "prettier": "^3.7.4",
+    "vitest": "^4.0.16",
+    "drizzle-kit": "^0.31.8"
+  }
+}
+
+===== FILE STRUCTURE =====
+src/App.css
+src/App.tsx
+src/components/AuthLayout.tsx
+src/components/AuthLayoutSkeleton.tsx
+src/components/layout/AppLayout.tsx
+src/components/ui/accordion.tsx
+src/components/ui/alert-dialog.tsx
+src/components/ui/alert.tsx
+src/components/ui/aspect-ratio.tsx
+src/components/ui/avatar.tsx
+src/components/ui/badge.tsx
+src/components/ui/breadcrumb.tsx
+src/components/ui/button-group.tsx
+src/components/ui/button.tsx
+src/components/ui/calendar.tsx
+src/components/ui/card.tsx
+src/components/ui/carousel.tsx
+src/components/ui/chart.tsx
+src/components/ui/checkbox.tsx
+src/components/ui/collapsible.tsx
+src/components/ui/command.tsx
+src/components/ui/context-menu.tsx
+src/components/ui/dialog.tsx
+src/components/ui/drawer.tsx
+src/components/ui/dropdown-menu.tsx
+src/components/ui/empty.tsx
+src/components/ui/field.tsx
+src/components/ui/form.tsx
+src/components/ui/hover-card.tsx
+src/components/ui/input-group.tsx
+src/components/ui/input-otp.tsx
+src/components/ui/input.tsx
+src/components/ui/item.tsx
+src/components/ui/kbd.tsx
+src/components/ui/label.tsx
+src/components/ui/menubar.tsx
+src/components/ui/navigation-menu.tsx
+src/components/ui/pagination.tsx
+src/components/ui/popover.tsx
+src/components/ui/progress.tsx
+src/components/ui/radio-group.tsx
+src/components/ui/resizable.tsx
+src/components/ui/scroll-area.tsx
+src/components/ui/select.tsx
+src/components/ui/separator.tsx
+src/components/ui/sheet.tsx
+src/components/ui/sidebar.tsx
+src/components/ui/skeleton.tsx
+src/components/ui/slider.tsx
+src/components/ui/sonner.tsx
+src/components/ui/spinner.tsx
+src/components/ui/switch.tsx
+src/components/ui/table.tsx
+src/components/ui/tabs.tsx
+src/components/ui/textarea.tsx
+src/components/ui/toggle-group.tsx
+src/components/ui/toggle.tsx
+src/components/ui/tooltip.tsx
+src/const.ts
+src/hooks/use-mobile.ts
+src/hooks/useAuth.ts
+src/index.css
+src/lib/utils.ts
+src/main.tsx
+src/pages/AiInsights.tsx
+src/pages/Analytics.tsx
+src/pages/Calendar.tsx
+src/pages/Dashboard.tsx
+src/pages/Fields.tsx
+src/pages/Home.tsx
+src/pages/Inventory.tsx
+src/pages/Login.tsx
+src/pages/NotFound.tsx
+src/pages/Sensors.tsx
+src/pages/SettingsPage.tsx
+src/pages/Workers.tsx
+src/providers/trpc.tsx
+api/auth-router.ts
+api/boot.ts
+api/context.ts
+api/kimi/auth.ts
+api/kimi/platform.ts
+api/kimi/session.ts
+api/kimi/types.ts
+api/lib/cookies.ts
+api/lib/env.ts
+api/lib/http.ts
+api/lib/vite.ts
+api/middleware.ts
+api/queries/connection.ts
+api/queries/users.ts
+api/router.ts
+api/routers/activities.ts
+api/routers/aiInsights.ts
+api/routers/analytics.ts
+api/routers/calendar.ts
+api/routers/fields.ts
+api/routers/inventory.ts
+api/routers/notifications.ts
+api/routers/sensors.ts
+api/routers/settings.ts
+api/routers/workers.ts
+db/relations.ts
+db/schema.ts
+db/seed.ts
+
+===== DATABASE TABLES =====
+Tables_in_test
+activities
+ai_insights
+calendar_events
+fields
+inventory_items
+notifications
+sensors
+settings
+users
+workers
+
+===== RECORD COUNTS =====
+table_name	total
+users	1
+fields	1
+workers	3
+inventory_items	1
+sensors	0
+activities	0
+
+===== PAGES =====
+AiInsights.tsx
+Analytics.tsx
+Calendar.tsx
+Dashboard.tsx
+Fields.tsx
+Home.tsx
+Inventory.tsx
+Login.tsx
+NotFound.tsx
+Sensors.tsx
+SettingsPage.tsx
+Workers.tsx
+
+===== API ROUTERS =====
+api/auth-router.ts
+api/router.ts
+api/routers/activities.ts
+api/routers/aiInsights.ts
+api/routers/analytics.ts
+api/routers/calendar.ts
+api/routers/fields.ts
+api/routers/inventory.ts
+api/routers/notifications.ts
+api/routers/sensors.ts
+api/routers/settings.ts
+api/routers/workers.ts
+
+===== CREATE MUTATIONS =====
+src/pages/Calendar.tsx:  const createEvent = trpc.calendar.create.useMutation({
+src/pages/Fields.tsx:const createField = trpc.fields.create.useMutation({
+src/pages/Inventory.tsx:  const createItem = trpc.inventory.create.useMutation({
+src/pages/Workers.tsx:  const createWorker = trpc.workers.create.useMutation({
+
+===== ADMIN USER =====
+id	unionId	name	role
+1	admin	Real Admin	admin

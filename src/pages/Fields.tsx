@@ -13,12 +13,18 @@ export default function Fields() {
   const [search, setSearch] = useState("");
   const utils = trpc.useUtils();
   const { data: fields, isLoading } = trpc.fields.list.useQuery();
-  const createField = trpc.fields.create.useMutation({
-    onSuccess: () => {
-      utils.fields.list.invalidate();
-      setOpen(false);
-    },
-  });
+
+const createField = trpc.fields.create.useMutation({
+  onSuccess: () => {
+    console.log("FIELD CREATED");
+    utils.fields.list.invalidate();
+    setOpen(false);
+  },
+  onError: (err) => {
+    console.error("CREATE FIELD ERROR:", err);
+    alert(err.message);
+  },
+});
 
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
