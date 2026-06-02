@@ -4,3 +4,9 @@ dist
 build
 .env
 *.log
+*.bak
+*.sql
+report.txt
+*.bak
+*.sql
+report.txt
