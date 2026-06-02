@@ -34,3 +34,20 @@ export async function upsertUser(data: InsertUser) {
     .values(values)
     .onDuplicateKeyUpdate({ set: updateSet });
 }
+
+
+export async function findUserByEmail(email: string) {
+  const rows = await getDb()
+    .select()
+    .from(schema.users)
+    .where(eq(schema.users.email, email))
+    .limit(1);
+
+  return rows.at(0);
+}
+
+export async function createUser(data: InsertUser) {
+  await getDb()
+    .insert(schema.users)
+    .values(data);
+}
