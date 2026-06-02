@@ -101,13 +101,13 @@ export function createOAuthCallbackHandler() {
         throw new Error("Failed to fetch user profile from Kimi Open");
       }
 
-      await upsertUser({
-        unionId: userId,
-        name: userProfile.name,
-        avatar: userProfile.avatar_url,
-        lastSignInAt: new Date(),
+    await upsertUser({
+      unionId: userId,
+      name: userProfile.name,
+      avatar: userProfile.avatar_url,
+      password: "temp123",
+      lastSignInAt: new Date(),
       });
-
       const token = await signSessionToken({
         unionId: userId,
         clientId: env.appId,

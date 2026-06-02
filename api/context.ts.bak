@@ -20,5 +20,3 @@ export async function createContext(
     user: result[0] ?? null,
   };
 }
-export type TrpcContext = Awaited<ReturnType<typeof createContext>>;
-

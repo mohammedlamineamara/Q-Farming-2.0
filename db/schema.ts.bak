@@ -1,6 +1,7 @@
 import {
   mysqlTable,
   mysqlEnum,
+  serial,
   varchar,
   text,
   timestamp,
@@ -17,16 +18,9 @@ id: bigint("id", { mode: "number", unsigned: true })
   .primaryKey(),
   unionId: varchar("unionId", { length: 255 }).notNull().unique(),
   name: varchar("name", { length: 255 }),
-  avatar: text("avatar"),
   email: varchar("email", { length: 320 }),
-  password: varchar("password", { length: 255 }).notNull(),
-  role: mysqlEnum("role", [
-  "admin",
-  "farm_manager",
-  "agronomist",
-  "worker"
-  ]).default("worker").notNull(),
-
+  avatar: text("avatar"),
+  role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt")
     .defaultNow()
@@ -103,35 +97,18 @@ export type InsertSensor = typeof sensors.$inferInsert;
 
 // ─── Workers ───────────────────────────────────────────────────
 export const workers = mysqlTable("workers", {
-  id: bigint("id", { mode: "number", unsigned: true })
-    .autoincrement()
-    .primaryKey(),
-
+id: bigint("id", { mode: "number", unsigned: true })
+  .autoincrement()
+  .primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
-
   role: varchar("role", { length: 255 }).notNull(),
-
-  status: mysqlEnum("status", ["online", "offline", "busy"])
-    .default("offline")
-    .notNull(),
-
-  avatar: varchar("avatar", { length: 50 })
-    .default("👷")
-    .notNull(),
-
+  status: mysqlEnum("status", ["online", "offline", "busy"]).default("offline").notNull(),
+  avatar: varchar("avatar", { length: 50 }).default("👷").notNull(),
   phone: varchar("phone", { length: 50 }),
-
   email: varchar("email", { length: 320 }),
-
-  userId: bigint("userId", { mode: "number", unsigned: true })
-    .notNull(),
-
+  userId: bigint("userId", { mode: "number", unsigned: true }).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-
-  updatedAt: timestamp("updatedAt")
-    .defaultNow()
-    .notNull()
-    .$onUpdate(() => new Date()),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull().$onUpdate(() => new Date()),
 });
 
 export type Worker = typeof workers.$inferSelect;
