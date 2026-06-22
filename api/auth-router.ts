@@ -4,7 +4,12 @@ import { Session } from "@contracts/constants";
 import { getSessionCookieOptions } from "./lib/cookies";
 import { createRouter, authedQuery, publicQuery } from "./middleware";
 import { createUser, findUserByEmail } from "./queries/users";
-import { hashPassword } from "./auth/password";
+import { signSessionToken } from "./kimi/session";
+import { env } from "./lib/env";
+import {
+  hashPassword,
+  verifyPassword,
+} from "./auth/password";
 
 export const authRouter = createRouter({
   register: publicQuery
@@ -32,7 +37,61 @@ export const authRouter = createRouter({
         role: "worker",
       });
 
-      return { success: true };
+      return {
+        success: true,
+      };
+    }),
+
+  login: publicQuery
+    .input(
+      z.object({
+        email: z.string().email(),
+        password: z.string().min(6),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const user = await findUserByEmail(input.email);
+
+      if (!user) {
+        throw new Error("Invalid email or password");
+      }
+
+      const validPassword = await verifyPassword(
+        input.password,
+        user.password,
+      );
+
+      if (!validPassword) {
+        throw new Error("Invalid email or password");
+      }
+
+      const token = await signSessionToken({
+        unionId: user.unionId,
+        clientId: env.appId,
+      });
+
+      const cookieOpts = getSessionCookieOptions(ctx.req.headers);
+
+      ctx.resHeaders.append(
+        "set-cookie",
+        cookie.serialize(Session.cookieName, token, {
+          httpOnly: cookieOpts.httpOnly,
+          path: cookieOpts.path,
+          sameSite: cookieOpts.sameSite?.toLowerCase() as "lax" | "none",
+          secure: cookieOpts.secure,
+          maxAge: Session.maxAgeMs / 1000,
+        }),
+      );
+
+      return {
+        success: true,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+      };
     }),
 
   me: authedQuery.query((opts) => opts.ctx.user),
@@ -51,6 +110,8 @@ export const authRouter = createRouter({
       }),
     );
 
-    return { success: true };
+    return {
+      success: true,
+    };
   }),
 });
