@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && esbuild api/boot.ts --platform=node --bundle --format=esm --outdir=dist --banner:js=\"import { createRequire } from 'module';const require = createRequire(import.meta.url);\"",
+    "gemini-review": "./scripts/gemini-ai-review.sh",
     "lint": "eslint .",
+    "ai-review": "./scripts/ai-review.sh",
     "preview": "vite preview",
     "start": "NODE_ENV=production node dist/boot.js",
     "check": "tsc -b",
@@ -74,6 +76,7 @@
     "react-hook-form": "^7.70.0",
     "react-resizable-panels": "^4.2.2",
     "react-router": "^7.6.1",
+    "react-router-dom": "^7.18.0",
     "recharts": "^2.15.4",
     "sonner": "^2.0.7",
     "superjson": "^2.2.6",

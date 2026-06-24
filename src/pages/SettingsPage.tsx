@@ -34,7 +34,9 @@ export default function SettingsPage() {
     farmLocation: "Algiers, Algeria",
   });
 
-  useEffect(() => {
+  const [prevSettingsData, setPrevSettingsData] = useState<typeof settingsData>(undefined);
+  if (settingsData !== prevSettingsData) {
+    setPrevSettingsData(settingsData);
     if (settingsData) {
       setLocalSettings({
         theme: settingsData.theme as "light" | "dark",
@@ -46,7 +48,7 @@ export default function SettingsPage() {
         farmLocation: settingsData.farmLocation,
       });
     }
-  }, [settingsData]);
+  }
 
   const handleToggle = (key: string, value: boolean) => {
     const newSettings = { ...localSettings, [key]: value };

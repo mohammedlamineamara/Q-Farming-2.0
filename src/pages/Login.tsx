@@ -1,13 +1,29 @@
 import { useState } from "react";
-
+import { useNavigate } from "react-router";
+import { trpc } from "../providers/trpc";
 export default function Login() {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const loginMutation = trpc.auth.login.useMutation({
+    onSuccess() {
+      navigate("/");
+    },
+    onError(error) {
+      setError(error.message);
+    },
+  });
+
+  const handleLogin = async (
+    e: React.FormEvent,
+  ) => {
     e.preventDefault();
+    setError("");
 
-    console.log({
+    loginMutation.mutate({
       email,
       password,
     });
@@ -18,6 +34,12 @@ export default function Login() {
       <h1 className="text-2xl font-bold mb-6">
         Login
       </h1>
+
+      {error && (
+        <div className="mb-4 text-red-500">
+          {error}
+        </div>
+      )}
 
       <form
         onSubmit={handleLogin}
@@ -45,9 +67,12 @@ export default function Login() {
 
         <button
           type="submit"
+          disabled={loginMutation.isPending}
           className="w-full border p-2"
         >
-          Login
+          {loginMutation.isPending
+            ? "Loading..."
+            : "Login"}
         </button>
       </form>
     </div>

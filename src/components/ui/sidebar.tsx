@@ -599,6 +599,15 @@ function SidebarMenuBadge({
   )
 }
 
+function getDeterministicWidth(id: string) {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = id.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const percentage = Math.abs(hash % 41) + 50; // 50 to 90%
+  return `${percentage}%`;
+}
+
 function SidebarMenuSkeleton({
   className,
   showIcon = false,
@@ -606,10 +615,11 @@ function SidebarMenuSkeleton({
 }: React.ComponentProps<"div"> & {
   showIcon?: boolean
 }) {
-  // Random width between 50 to 90%.
+  const id = React.useId();
+  // Deterministic width between 50 to 90% based on stable unique React useId.
   const width = React.useMemo(() => {
-    return `${Math.floor(Math.random() * 40) + 50}%`
-  }, [])
+    return getDeterministicWidth(id);
+  }, [id])
 
   return (
     <div

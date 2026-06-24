@@ -1,24 +1,24 @@
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
-import { getDb } from "./queries/connection";
-import { users } from "../db/schema";
-import { eq } from "drizzle-orm";
+import { authenticateRequest } from "./kimi/auth";
 
 export async function createContext(
   opts: FetchCreateContextFnOptions,
 ) {
-  const db = getDb();
+  let user = null;
 
-  const result = await db
-    .select()
-    .from(users)
-    .where(eq(users.unionId, "admin"))
-    .limit(1);
+  try {
+    user = await authenticateRequest(opts.req.headers);
+  } catch {
+    user = null;
+  }
 
   return {
     req: opts.req,
     resHeaders: opts.resHeaders,
-    user: result[0] ?? null,
+    user,
   };
 }
-export type TrpcContext = Awaited<ReturnType<typeof createContext>>;
 
+export type TrpcContext = Awaited<
+  ReturnType<typeof createContext>
+>;
