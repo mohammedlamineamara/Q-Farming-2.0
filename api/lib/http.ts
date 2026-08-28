@@ -1,7 +1,8 @@
-interface RequestConfig extends RequestInit {
+interface RequestConfig extends Omit<RequestInit, "body"> {
   baseUrl?: string;
   params?: Record<string, string | number>;
   timeout?: number;
+  body?: unknown;
 }
 
 export class HttpClient {
@@ -16,7 +17,10 @@ export class HttpClient {
     };
   }
 
-  async request<T>(endpoint: string, config: RequestConfig = {}): Promise<T> {
+  async request<T>(
+    endpoint: string,
+    config: RequestConfig = {},
+  ): Promise<T> {
     const {
       method = "GET",
       params,
@@ -27,6 +31,7 @@ export class HttpClient {
     } = config;
 
     const url = new URL(`${this.baseUrl}${endpoint}`);
+
     if (params) {
       Object.entries(params).forEach(([key, value]) =>
         url.searchParams.append(key, value.toString()),
@@ -41,7 +46,7 @@ export class HttpClient {
         ...rest,
         method,
         headers: { ...this.defaultHeaders, ...headers },
-        body: body ? JSON.stringify(body) : undefined,
+        body: body !== undefined ? JSON.stringify(body) : undefined,
         signal: controller.signal,
       });
 
@@ -51,7 +56,10 @@ export class HttpClient {
         const errorData = (await response
           .json()
           .catch(() => ({}))) as Record<string, string>;
-        throw new Error(errorData.message || `HTTP Error: ${response.status}`);
+
+        throw new Error(
+          errorData.message || `HTTP Error: ${response.status}`,
+        );
       }
 
       return (await response.json()) as T;
@@ -59,6 +67,7 @@ export class HttpClient {
       if (error instanceof Error && error.name === "AbortError") {
         throw new Error("Request timeout");
       }
+
       throw error;
     }
   }
@@ -68,10 +77,22 @@ export class HttpClient {
     params?: RequestConfig["params"],
     config?: RequestConfig,
   ) {
-    return this.request<T>(url, { ...config, method: "GET", params });
+    return this.request<T>(url, {
+      ...config,
+      method: "GET",
+      params,
+    });
   }
 
-  post<T>(url: string, body?: unknown, config?: RequestConfig) {
-    return this.request<T>(url, { ...config, method: "POST", body });
+  post<T>(
+    url: string,
+    body?: unknown,
+    config?: RequestConfig,
+  ) {
+    return this.request<T>(url, {
+      ...config,
+      method: "POST",
+      body,
+    });
   }
 }
