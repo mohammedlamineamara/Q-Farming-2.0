@@ -10,3 +10,6 @@ report.txt
 *.bak
 *.sql
 report.txt
+.env.*
+!.env.example
+cookies.txt

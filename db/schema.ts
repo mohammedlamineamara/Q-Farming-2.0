@@ -61,6 +61,89 @@ id: bigint("id", { mode: "number", unsigned: true })
 export type Field = typeof fields.$inferSelect;
 export type InsertField = typeof fields.$inferInsert;
 
+// ─── Harvests / Production ────────────────────────────────────
+export const harvests = mysqlTable("harvests", {
+  id: bigint("id", { mode: "number", unsigned: true })
+    .autoincrement()
+    .primaryKey(),
+
+  fieldId: bigint("fieldId", { mode: "number", unsigned: true })
+    .notNull(),
+
+  crop: varchar("crop", { length: 100 }).notNull(),
+
+  quantity: decimal("quantity", { precision: 12, scale: 2 })
+    .notNull(),
+
+  unit: varchar("unit", { length: 20 })
+    .default("tons")
+    .notNull(),
+
+  yieldPerHa: decimal("yieldPerHa", { precision: 10, scale: 2 })
+    .notNull(),
+
+  harvestedAt: timestamp("harvestedAt")
+    .notNull(),
+
+  notes: text("notes"),
+
+  userId: bigint("userId", { mode: "number", unsigned: true })
+    .notNull(),
+
+  createdAt: timestamp("createdAt")
+    .defaultNow()
+    .notNull(),
+});
+
+export type Harvest = typeof harvests.$inferSelect;
+export type InsertHarvest = typeof harvests.$inferInsert;
+
+// ─── Sales / Revenue ──────────────────────────────────────────
+export const sales = mysqlTable("sales", {
+  id: bigint("id", { mode: "number", unsigned: true })
+    .autoincrement()
+    .primaryKey(),
+
+  harvestId: bigint("harvestId", { mode: "number", unsigned: true }),
+
+  crop: varchar("crop", { length: 100 })
+    .notNull(),
+
+  quantity: decimal("quantity", { precision: 12, scale: 2 })
+    .notNull(),
+
+  unit: varchar("unit", { length: 20 })
+    .default("tons")
+    .notNull(),
+
+  unitPrice: decimal("unitPrice", { precision: 12, scale: 2 })
+    .notNull(),
+
+  totalAmount: decimal("totalAmount", { precision: 14, scale: 2 })
+    .notNull(),
+
+  currency: varchar("currency", { length: 10 })
+    .default("DZD")
+    .notNull(),
+
+  soldAt: timestamp("soldAt")
+    .notNull(),
+
+  customer: varchar("customer", { length: 255 }),
+
+  notes: text("notes"),
+
+  userId: bigint("userId", { mode: "number", unsigned: true })
+    .notNull(),
+
+  createdAt: timestamp("createdAt")
+    .defaultNow()
+    .notNull(),
+});
+
+export type Sale = typeof sales.$inferSelect;
+export type InsertSale = typeof sales.$inferInsert;
+
 // ─── Inventory Items ───────────────────────────────────────────
 export const inventoryItems = mysqlTable("inventory_items", {
 id: bigint("id", { mode: "number", unsigned: true })
