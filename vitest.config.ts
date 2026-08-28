@@ -5,6 +5,7 @@ const templateRoot = path.resolve(import.meta.dirname);
 
 export default defineConfig({
   root: templateRoot,
+
   resolve: {
     alias: {
       "@": path.resolve(templateRoot, "src"),
@@ -12,8 +13,11 @@ export default defineConfig({
       "@assets": path.resolve(templateRoot, "attached_assets"),
     },
   },
+
   test: {
     environment: "node",
     include: ["api/**/*.test.ts", "api/**/*.spec.ts"],
+    setupFiles: ["./vitest.setup.ts"],
   },
 });
+
