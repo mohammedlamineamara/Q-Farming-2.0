@@ -24,12 +24,12 @@ export const workersRouter = createRouter({
   create: authedMutation
     .input(
       z.object({
-        name: z.string().min(1),
-        role: z.string().min(1),
+        name: z.string().min(1).max(100),
+        role: z.string().min(1).max(100),
         status: z.enum(["online", "offline", "busy"]).default("offline"),
-        avatar: z.string().default("👷"),
-        phone: z.string().optional(),
-        email: z.string().email().optional(),
+        avatar: z.string().max(50).default("👷"),
+        phone: z.string().max(30).optional(),
+        email: z.string().email().max(255).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -45,12 +45,12 @@ export const workersRouter = createRouter({
     .input(
       z.object({
         id: z.number(),
-        name: z.string().optional(),
-        role: z.string().optional(),
+        name: z.string().min(1).max(100).optional(),
+        role: z.string().min(1).max(100).optional(),
         status: z.enum(["online", "offline", "busy"]).optional(),
-        avatar: z.string().optional(),
-        phone: z.string().optional(),
-        email: z.string().email().optional(),
+        avatar: z.string().max(50).optional(),
+        phone: z.string().max(30).optional(),
+        email: z.string().email().max(255).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {

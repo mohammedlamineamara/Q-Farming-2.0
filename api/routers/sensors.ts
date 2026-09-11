@@ -3,6 +3,7 @@ import { createRouter, authedQuery, authedMutation } from "../middleware";
 import { getDb } from "../queries/connection";
 import { sensors } from "../../db/schema";
 import { eq, and } from "drizzle-orm";
+import { verifyFieldOwnership } from "../lib/tenant";
 
 export const sensorsRouter = createRouter({
   list: authedQuery.query(async ({ ctx }) => {
@@ -24,9 +25,9 @@ export const sensorsRouter = createRouter({
   create: authedMutation
     .input(
       z.object({
-        name: z.string().min(1),
-        value: z.string().min(1),
-        unit: z.string().min(1),
+        name: z.string().min(1).max(100),
+        value: z.string().min(1).max(50),
+        unit: z.string().min(1).max(20),
         max: z.number().default(100),
         status: z.enum(["optimal", "warning", "critical"]).default("optimal"),
         color: z.string().default("#10b981"),
@@ -35,6 +36,11 @@ export const sensorsRouter = createRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Validate foreign-key tenant ownership
+      if (input.fieldId !== undefined) {
+        await verifyFieldOwnership(input.fieldId, ctx.user.id);
+      }
+
       const db = getDb();
       const result = await db.insert(sensors).values({
         ...input,
@@ -47,9 +53,9 @@ export const sensorsRouter = createRouter({
     .input(
       z.object({
         id: z.number(),
-        name: z.string().optional(),
-        value: z.string().optional(),
-        unit: z.string().optional(),
+        name: z.string().min(1).max(100).optional(),
+        value: z.string().min(1).max(50).optional(),
+        unit: z.string().min(1).max(20).optional(),
         max: z.number().optional(),
         status: z.enum(["optimal", "warning", "critical"]).optional(),
         color: z.string().optional(),
@@ -58,6 +64,11 @@ export const sensorsRouter = createRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Validate foreign-key tenant ownership
+      if (input.fieldId !== undefined) {
+        await verifyFieldOwnership(input.fieldId, ctx.user.id);
+      }
+
       const db = getDb();
       const { id, ...data } = input;
       await db

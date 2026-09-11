@@ -24,12 +24,12 @@ export const inventoryRouter = createRouter({
   create: authedMutation
     .input(
       z.object({
-        name: z.string().min(1),
+        name: z.string().min(1).max(100),
         category: z.enum(["seeds", "fertilizer", "equipment", "pesticide", "other"]),
         stock: z.number().default(0),
         max: z.number().default(100),
-        unit: z.string().min(1),
-        icon: z.string().default("📦"),
+        unit: z.string().min(1).max(20),
+        icon: z.string().max(50).default("📦"),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -45,12 +45,12 @@ export const inventoryRouter = createRouter({
     .input(
       z.object({
         id: z.number(),
-        name: z.string().optional(),
+        name: z.string().min(1).max(100).optional(),
         category: z.enum(["seeds", "fertilizer", "equipment", "pesticide", "other"]).optional(),
         stock: z.number().optional(),
         max: z.number().optional(),
-        unit: z.string().optional(),
-        icon: z.string().optional(),
+        unit: z.string().min(1).max(20).optional(),
+        icon: z.string().max(50).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {

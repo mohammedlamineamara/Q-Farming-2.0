@@ -10,7 +10,10 @@ import CalendarPage from "@/pages/Calendar";
 import AiInsightsPage from "@/pages/AiInsights";
 import SettingsPage from "@/pages/SettingsPage";
 import Login from "@/pages/Login";
+import Register from "@/pages/Register";
 import NotFound from "@/pages/NotFound";
+import { RoleGuard } from "@/components/rbac/RoleGuard";
+import { Toaster } from "@/components/ui/sonner";
 
 function AppRoutes() {
   return (
@@ -20,10 +23,31 @@ function AppRoutes() {
         <Route path="/fields" element={<Fields />} />
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/sensors" element={<Sensors />} />
-        <Route path="/workers" element={<Workers />} />
-        <Route path="/analytics" element={<Analytics />} />
+        <Route
+          path="/workers"
+          element={
+            <RoleGuard requiredPermission="workers.view">
+              <Workers />
+            </RoleGuard>
+          }
+        />
+        <Route
+          path="/analytics"
+          element={
+            <RoleGuard requiredPermission="analytics.view">
+              <Analytics />
+            </RoleGuard>
+          }
+        />
         <Route path="/calendar" element={<CalendarPage />} />
-        <Route path="/ai" element={<AiInsightsPage />} />
+        <Route
+          path="/ai"
+          element={
+            <RoleGuard requiredPermission="aiInsights.view">
+              <AiInsightsPage />
+            </RoleGuard>
+          }
+        />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
@@ -33,9 +57,13 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/*" element={<AppRoutes />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/*" element={<AppRoutes />} />
+      </Routes>
+      <Toaster />
+    </>
   );
 }

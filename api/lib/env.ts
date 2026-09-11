@@ -5,23 +5,39 @@ dotenv.config({
   override: true,
 });
 
-function required(name: string): string {
+function getEnv(name: string, fallback = ""): string {
   const value = process.env[name];
+  return value || fallback;
+}
 
-  if (!value && process.env.NODE_ENV === "production") {
-    throw new Error(`Missing required environment variable: ${name}`);
+const isProduction = process.env.NODE_ENV === "production";
+
+function getRequiredInProduction(name: string, devFallback: string): string {
+  const value = process.env[name];
+  if (isProduction) {
+    if (!value || !value.trim()) {
+      throw new Error(`Production configuration error: ${name} is required but not configured`);
+    }
+    return value.trim();
   }
+  return value?.trim() || devFallback;
+}
 
-  return value ?? "";
+function getSanitizedDatabaseUrl(): string {
+  const raw = process.env.DATABASE_URL?.trim();
+  if (!raw || raw.startsWith("#")) {
+    return "";
+  }
+  return raw;
 }
 
 export const env = {
-  appId: required("APP_ID"),
-  appSecret: required("APP_SECRET"),
+  appId: getEnv("APP_ID", "q-farming-app"),
+  appSecret: getRequiredInProduction("APP_SECRET", "q-farming-secret-key-for-auth-tokens-32chars"),
 
-  isProduction: process.env.NODE_ENV === "production",
+  isProduction,
 
-  databaseUrl: required("DATABASE_URL"),
+  databaseUrl: getSanitizedDatabaseUrl(),
 
   // Kimi OAuth is optional for local development.
   kimiAuthUrl: process.env.KIMI_AUTH_URL ?? "",

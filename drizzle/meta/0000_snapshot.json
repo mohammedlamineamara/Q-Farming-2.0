@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "4f5f248e-3c2b-48ea-8fbb-5297198cc6d6",
+  "id": "2c69808a-f98b-4a31-9a5c-1df9a6f33eac",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "activities": {
@@ -61,7 +61,16 @@
           "default": "(now())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "activities_user_created_idx": {
+          "name": "activities_user_created_idx",
+          "columns": [
+            "userId",
+            "createdAt"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "activities_id": {
@@ -137,7 +146,16 @@
           "default": "(now())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "ai_insights_user_cat_idx": {
+          "name": "ai_insights_user_cat_idx",
+          "columns": [
+            "userId",
+            "category"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "ai_insights_id": {
@@ -219,7 +237,16 @@
           "default": "(now())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "calendar_events_user_date_idx": {
+          "name": "calendar_events_user_date_idx",
+          "columns": [
+            "userId",
+            "eventDate"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "calendar_events_id": {
@@ -340,7 +367,15 @@
           "default": "(now())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "fields_user_id_idx": {
+          "name": "fields_user_id_idx",
+          "columns": [
+            "userId"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "fields_id": {
@@ -429,7 +464,16 @@
           "default": "(now())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "harvests_user_field_idx": {
+          "name": "harvests_user_field_idx",
+          "columns": [
+            "userId",
+            "fieldId"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "harvests_id": {
@@ -521,7 +565,15 @@
           "default": "(now())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "inventory_items_user_id_idx": {
+          "name": "inventory_items_user_id_idx",
+          "columns": [
+            "userId"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "inventory_items_id": {
@@ -590,7 +642,16 @@
           "default": "(now())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "notifications_user_read_idx": {
+          "name": "notifications_user_read_idx",
+          "columns": [
+            "userId",
+            "read"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "notifications_id": {
@@ -701,7 +762,16 @@
           "default": "(now())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "sales_user_harvest_idx": {
+          "name": "sales_user_harvest_idx",
+          "columns": [
+            "userId",
+            "harvestId"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "sales_id": {
@@ -808,7 +878,16 @@
           "default": "(now())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "sensors_user_field_idx": {
+          "name": "sensors_user_field_idx",
+          "columns": [
+            "userId",
+            "fieldId"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "sensors_id": {
@@ -1001,7 +1080,15 @@
           "default": "(now())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "columns": [
+            "email"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "users_id": {
@@ -1099,7 +1186,15 @@
           "default": "(now())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "workers_user_id_idx": {
+          "name": "workers_user_id_idx",
+          "columns": [
+            "userId"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "workers_id": {

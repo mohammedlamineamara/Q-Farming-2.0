@@ -3,6 +3,7 @@ import { createRouter, authedQuery, authedMutation } from "../middleware";
 import { getDb } from "../queries/connection";
 import { calendarEvents } from "../../db/schema";
 import { eq, and, gte, desc } from "drizzle-orm";
+import { verifyFieldOwnership, verifyWorkerOwnership } from "../lib/tenant";
 
 export const calendarRouter = createRouter({
   list: authedQuery.query(async ({ ctx }) => {
@@ -27,8 +28,8 @@ export const calendarRouter = createRouter({
   create: authedMutation
     .input(
       z.object({
-        title: z.string().min(1),
-        description: z.string().optional(),
+        title: z.string().min(1).max(200),
+        description: z.string().max(1000).optional(),
         eventDate: z.string(),
         fieldId: z.number().optional(),
         workerId: z.number().optional(),
@@ -36,6 +37,14 @@ export const calendarRouter = createRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Validate foreign-key tenant ownership
+      if (input.fieldId !== undefined) {
+        await verifyFieldOwnership(input.fieldId, ctx.user.id);
+      }
+      if (input.workerId !== undefined) {
+        await verifyWorkerOwnership(input.workerId, ctx.user.id);
+      }
+
       const db = getDb();
       const result = await db.insert(calendarEvents).values({
         ...input,
@@ -49,8 +58,8 @@ export const calendarRouter = createRouter({
     .input(
       z.object({
         id: z.number(),
-        title: z.string().optional(),
-        description: z.string().optional(),
+        title: z.string().min(1).max(200).optional(),
+        description: z.string().max(1000).optional(),
         eventDate: z.string().optional(),
         fieldId: z.number().optional(),
         workerId: z.number().optional(),
@@ -58,6 +67,14 @@ export const calendarRouter = createRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Validate foreign-key tenant ownership
+      if (input.fieldId !== undefined) {
+        await verifyFieldOwnership(input.fieldId, ctx.user.id);
+      }
+      if (input.workerId !== undefined) {
+        await verifyWorkerOwnership(input.workerId, ctx.user.id);
+      }
+
       const db = getDb();
       const { id, ...data } = input;
       const updateData: Record<string, unknown> = { ...data };

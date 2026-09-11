@@ -2,35 +2,49 @@ import { useState } from "react";
 import { trpc } from "@/providers/trpc";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useI18n } from "@/i18n";
 import { Radio, Activity } from "lucide-react";
 
 export default function Sensors() {
   const { data: sensors, isLoading } = trpc.sensors.list.useQuery();
   const { data: trend } = trpc.analytics.sensorTrend.useQuery();
+  const { t } = useI18n();
 
   const [period, setPeriod] = useState("24h");
 
   const statusColors: Record<string, string> = {
-    optimal: "bg-emerald-500/15 text-emerald-400 border-emerald-500/20",
-    warning: "bg-amber-500/15 text-amber-400 border-amber-500/20",
-    critical: "bg-red-500/15 text-red-400 border-red-500/20",
+    optimal: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/20",
+    warning: "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/20",
+    critical: "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/20",
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "optimal":
+        return t("sensors.optimal");
+      case "warning":
+        return t("sensors.warning");
+      case "critical":
+        return t("sensors.critical");
+      default:
+        return status;
+    }
   };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-500/10 flex items-center justify-center border border-cyan-500/20">
-            <Radio className="w-5 h-5 text-cyan-400" />
+          <div className="w-10 h-10 rounded-xl bg-cyan-500/10 dark:bg-cyan-500/20 flex items-center justify-center border border-cyan-500/20 text-cyan-600 dark:text-cyan-400">
+            <Radio className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white">IoT Sensor Network</h1>
-            <p className="text-sm text-slate-400">Real-time monitoring of your farm sensors</p>
+            <h1 className="text-xl font-bold text-slate-900 dark:text-white">{t("sensors.title")}</h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">{t("sensors.subtitle")}</p>
           </div>
         </div>
-        <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-live-pulse mr-2" />
-          LIVE DATA
+        <Badge variant="outline" className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-white/10 text-xs font-semibold">
+          {t("sensors.badge")}
         </Badge>
       </div>
 
@@ -38,7 +52,7 @@ export default function Sensors() {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {isLoading &&
           Array.from({ length: 8 }).map((_, i) => (
-            <Card key={i} className="bg-slate-800/40 border-white/5 animate-pulse h-56" />
+            <Card key={i} className="bg-slate-100 dark:bg-slate-800/40 border-slate-200 dark:border-white/5 animate-pulse h-56" />
           ))}
         {sensors?.map((sensor) => {
           const pct = Math.min((Number(sensor.value) / sensor.max) * 100, 100);
@@ -47,12 +61,12 @@ export default function Sensors() {
           return (
             <Card
               key={sensor.id}
-              className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-white/8 backdrop-blur-xl hover:border-cyan-500/30 transition-all duration-300 hover:-translate-y-1"
+              className="bg-white dark:bg-slate-900/60 border border-slate-200/80 dark:border-white/10 backdrop-blur-xl hover:border-cyan-500/30 transition-all duration-200 hover:-translate-y-0.5 shadow-xs"
             >
               <CardContent className="p-5 text-center">
                 <div className="relative w-20 h-20 mx-auto mb-3">
                   <svg className="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
-                    <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="6" />
+                    <circle cx="40" cy="40" r="34" fill="none" className="stroke-slate-200 dark:stroke-white/10" strokeWidth="6" />
                     <circle
                       cx="40"
                       cy="40"
@@ -64,20 +78,19 @@ export default function Sensors() {
                       strokeDasharray={circumference}
                       strokeDashoffset={offset}
                       className="transition-all duration-1000"
-                      style={{ filter: `drop-shadow(0 0 6px ${sensor.color})` }}
                     />
                   </svg>
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-base font-bold text-white">{sensor.value}</span>
+                    <span className="text-base font-bold text-slate-900 dark:text-white">{sensor.value}</span>
                   </div>
                 </div>
-                <div className="text-sm font-semibold text-slate-300 mb-1">
+                <div className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">
                   {sensor.icon} {sensor.name}
                 </div>
-                <Badge variant="outline" className={statusColors[sensor.status]}>
-                  {sensor.status.toUpperCase()}
+                <Badge variant="outline" className={statusColors[sensor.status] || ""}>
+                  {getStatusLabel(sensor.status)}
                 </Badge>
-                <div className="text-xs text-slate-500 mt-1.5">{sensor.unit}</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1.5">{sensor.unit}</div>
               </CardContent>
             </Card>
           );
@@ -85,20 +98,20 @@ export default function Sensors() {
       </div>
 
       {/* Sensor Trend Chart */}
-      <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-white/8 backdrop-blur-xl">
+      <Card className="bg-white dark:bg-slate-900/60 border border-slate-200/80 dark:border-white/10 backdrop-blur-xl shadow-xs">
         <CardHeader className="flex flex-row items-center justify-between pb-3">
-          <CardTitle className="text-base font-semibold flex items-center gap-2">
-            <Activity className="w-5 h-5 text-emerald-400" />
-            Sensor Data Trends
+          <CardTitle className="text-base font-semibold flex items-center gap-2 text-slate-900 dark:text-white">
+            <Activity className="w-5 h-5 text-emerald-500 dark:text-emerald-400" />
+            {t("sensors.sensorTrends")}
           </CardTitle>
           <select
             value={period}
             onChange={(e) => setPeriod(e.target.value)}
-            className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-slate-300 focus:outline-none focus:border-emerald-500/30"
+            className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-lg px-3 py-1.5 text-sm text-slate-700 dark:text-slate-300 focus:outline-none focus:border-emerald-500/30 shadow-xs cursor-pointer"
           >
-            <option value="24h">Last 24 Hours</option>
-            <option value="7d">Last 7 Days</option>
-            <option value="30d">Last 30 Days</option>
+            <option value="24h">{t("sensors.last24Hours")}</option>
+            <option value="7d">{t("sensors.last7Days")}</option>
+            <option value="30d">{t("sensors.last30Days")}</option>
           </select>
         </CardHeader>
         <CardContent>
@@ -118,7 +131,7 @@ export default function Sensors() {
                   y1={y + 20}
                   x2="580"
                   y2={y + 20}
-                  stroke="rgba(255,255,255,0.05)"
+                  className="stroke-slate-200 dark:stroke-white/10"
                   strokeWidth="1"
                   strokeDasharray="4,4"
                 />

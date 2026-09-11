@@ -1,0 +1,6 @@
+{
+  "name": "Q-Farming 2.0",
+  "description": "Smart farming management system with analytics, sensors, field tracking, and AI insights",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

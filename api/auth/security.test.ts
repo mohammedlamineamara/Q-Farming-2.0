@@ -67,4 +67,29 @@ describe("Q-Farming 2.0 - JWT Session", () => {
 
     expect(result).toBeNull();
   });
+
+  it("should invalidate session when APP_SECRET is changed (secret rotation)", async () => {
+    const payload = {
+      unionId: "rotation-user-001",
+      clientId: "q-farming-test",
+    };
+
+    const token = await signSessionToken(payload);
+    expect(token).toBeDefined();
+
+    // Verify token works with current secret
+    const valid = await verifySessionToken(token);
+    expect(valid).toEqual(payload);
+
+    // Simulate secret rotation with a new secret
+    const { env } = await import("../lib/env");
+    const originalSecret = env.appSecret;
+    try {
+      env.appSecret = "rotated-new-secret-key-32characters!";
+      const afterRotation = await verifySessionToken(token);
+      expect(afterRotation).toBeNull();
+    } finally {
+      env.appSecret = originalSecret;
+    }
+  });
 });

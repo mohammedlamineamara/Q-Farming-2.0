@@ -17,8 +17,8 @@ export const activitiesRouter = createRouter({
   create: authedMutation
     .input(
       z.object({
-        title: z.string().min(1),
-        icon: z.string().default("📋"),
+        title: z.string().min(1).max(255),
+        icon: z.string().max(50).default("📋"),
         type: z.enum(["success", "warning", "danger", "info"]).default("info"),
         read: z.boolean().default(false),
       })

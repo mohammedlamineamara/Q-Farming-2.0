@@ -10,20 +10,30 @@ import {
   hashPassword,
   verifyPassword,
 } from "./auth/password";
+import {
+  rateLimiter,
+  getClientIdentifier,
+  AUTH_RATE_LIMIT_CONFIGS,
+} from "./lib/rate-limit";
 
 export const authRouter = createRouter({
   register: publicQuery
     .input(
       z.object({
-        name: z.string().min(2),
-        email: z.string().email(),
-        password: z.string().min(6),
+        name: z.string().min(2).max(100),
+        email: z.string().email().max(255),
+        password: z.string().min(6).max(128),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      const clientId = getClientIdentifier(ctx.req, "reg");
+      rateLimiter.assertAllowed(clientId, AUTH_RATE_LIMIT_CONFIGS.register);
+
       const existingUser = await findUserByEmail(input.email);
 
       if (existingUser) {
+        // Record rate limit attempt to deter account enumeration
+        rateLimiter.recordFailure(clientId, AUTH_RATE_LIMIT_CONFIGS.register);
         throw new Error("Email already exists");
       }
 
@@ -45,14 +55,18 @@ export const authRouter = createRouter({
   login: publicQuery
     .input(
       z.object({
-        email: z.string().email(),
-        password: z.string().min(6),
+        email: z.string().email().max(255),
+        password: z.string().min(6).max(128),
       }),
     )
     .mutation(async ({ input, ctx }) => {
+      const clientId = getClientIdentifier(ctx.req, "login");
+      rateLimiter.assertAllowed(clientId, AUTH_RATE_LIMIT_CONFIGS.login);
+
       const user = await findUserByEmail(input.email);
 
       if (!user) {
+        rateLimiter.recordFailure(clientId, AUTH_RATE_LIMIT_CONFIGS.login);
         throw new Error("Invalid email or password");
       }
 
@@ -62,8 +76,12 @@ export const authRouter = createRouter({
       );
 
       if (!validPassword) {
+        rateLimiter.recordFailure(clientId, AUTH_RATE_LIMIT_CONFIGS.login);
         throw new Error("Invalid email or password");
       }
+
+      // Successful login resets rate limit counter for this client
+      rateLimiter.reset(clientId);
 
       const token = await signSessionToken({
         unionId: user.unionId,
@@ -94,19 +112,24 @@ export const authRouter = createRouter({
       };
     }),
 
-  me: authedQuery.query((opts) => opts.ctx.user),
+  me: authedQuery.query((opts) => {
+    if (!opts.ctx.user) return null;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...safeUser } = opts.ctx.user;
+    return safeUser;
+  }),
 
   logout: authedQuery.mutation(async ({ ctx }) => {
     const opts = getSessionCookieOptions(ctx.req.headers);
 
     ctx.resHeaders.append(
       "set-cookie",
-      cookie.serialize(Session.cookieName, "", {
+      cookie.serialize(Session.cookieName, "logged_out", {
         httpOnly: opts.httpOnly,
         path: opts.path,
         sameSite: opts.sameSite?.toLowerCase() as "lax" | "none",
         secure: opts.secure,
-        maxAge: 0,
+        maxAge: 86400,
       }),
     );
 

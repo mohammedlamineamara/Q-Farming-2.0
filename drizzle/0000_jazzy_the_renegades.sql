@@ -1,2 +1,0 @@
--- Baseline migration.
--- Q-Farming database already contains this schema.

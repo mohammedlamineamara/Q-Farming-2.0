@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
-import * as schema from "@db/schema";
-import type { InsertUser } from "@db/schema";
+import * as schema from "../../db/schema";
+import type { InsertUser } from "../../db/schema";
 import { getDb } from "./connection";
 import { env } from "../lib/env";
 
@@ -34,7 +34,6 @@ export async function upsertUser(data: InsertUser) {
     .values(values)
     .onDuplicateKeyUpdate({ set: updateSet });
 }
-
 
 export async function findUserByEmail(email: string) {
   const rows = await getDb()

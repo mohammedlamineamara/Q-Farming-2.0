@@ -24,14 +24,14 @@ export const fieldsRouter = createRouter({
   create: authedMutation
     .input(
       z.object({
-        name: z.string().min(1),
-        crop: z.string().min(1),
-        size: z.string().min(1),
+        name: z.string().min(1).max(100),
+        crop: z.string().min(1).max(100),
+        size: z.string().min(1).max(50),
         status: z.enum(["active", "irrigation", "harvest", "fallow"]).default("active"),
         progress: z.number().min(0).max(100).default(0),
-        location: z.string().min(1),
-        lat: z.string().default("36.75°N"),
-        lng: z.string().default("3.06°E"),
+        location: z.string().min(1).max(255),
+        lat: z.string().max(50).default("36.75°N"),
+        lng: z.string().max(50).default("3.06°E"),
         moisture: z.number().default(0),
         temp: z.number().default(0),
       })
@@ -49,14 +49,14 @@ export const fieldsRouter = createRouter({
     .input(
       z.object({
         id: z.number(),
-        name: z.string().optional(),
-        crop: z.string().optional(),
-        size: z.string().optional(),
+        name: z.string().min(1).max(100).optional(),
+        crop: z.string().min(1).max(100).optional(),
+        size: z.string().min(1).max(50).optional(),
         status: z.enum(["active", "irrigation", "harvest", "fallow"]).optional(),
         progress: z.number().optional(),
-        location: z.string().optional(),
-        lat: z.string().optional(),
-        lng: z.string().optional(),
+        location: z.string().min(1).max(255).optional(),
+        lat: z.string().max(50).optional(),
+        lng: z.string().max(50).optional(),
         moisture: z.number().optional(),
         temp: z.number().optional(),
       })
