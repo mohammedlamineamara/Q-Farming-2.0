@@ -41,3 +41,4 @@ function requireRole(role: string) {
 export const authedQuery = t.procedure.use(requireAuth);
 export const authedMutation = t.procedure.use(requireAuth);
 export const adminQuery = authedQuery.use(requireRole("admin"));
+export const adminMutation = authedMutation.use(requireRole("admin"));

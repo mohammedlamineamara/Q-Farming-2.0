@@ -9,6 +9,8 @@ import Analytics from "@/pages/Analytics";
 import CalendarPage from "@/pages/Calendar";
 import AiInsightsPage from "@/pages/AiInsights";
 import SettingsPage from "@/pages/SettingsPage";
+import AgriculturePage from "@/pages/Agriculture";
+import CropDetailPage from "@/pages/CropDetail";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import NotFound from "@/pages/NotFound";
@@ -21,6 +23,8 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/fields" element={<Fields />} />
+        <Route path="/agriculture" element={<AgriculturePage />} />
+        <Route path="/agriculture/crops/:cropId" element={<CropDetailPage />} />
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/sensors" element={<Sensors />} />
         <Route

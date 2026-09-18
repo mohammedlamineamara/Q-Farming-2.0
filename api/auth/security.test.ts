@@ -93,3 +93,90 @@ describe("Q-Farming 2.0 - JWT Session", () => {
     }
   });
 });
+
+describe("Q-Farming 2.0 - Production Environment Security Regression", () => {
+  it("should throw a configuration error if APP_SECRET is missing in production", async () => {
+    const { getRequiredInProduction } = await import("../lib/env");
+    expect(() => {
+      getRequiredInProduction("APP_SECRET", "dev-fallback", {
+        NODE_ENV: "production",
+        APP_SECRET: "",
+      });
+    }).toThrow("Production configuration error: APP_SECRET is required but not configured");
+  });
+
+  it("should throw a configuration error if APP_SECRET is whitespace in production", async () => {
+    const { getRequiredInProduction } = await import("../lib/env");
+    expect(() => {
+      getRequiredInProduction("APP_SECRET", "dev-fallback", {
+        NODE_ENV: "production",
+        APP_SECRET: "   ",
+      });
+    }).toThrow("Production configuration error: APP_SECRET is required but not configured");
+  });
+
+  it("should throw a configuration error if APP_SECRET is shorter than 32 characters in production", async () => {
+    const { getRequiredInProduction } = await import("../lib/env");
+    expect(() => {
+      getRequiredInProduction("APP_SECRET", "dev-fallback", {
+        NODE_ENV: "production",
+        APP_SECRET: "too-short-secret-key-12345",
+      });
+    }).toThrow("Production configuration error: APP_SECRET must be at least 32 characters in production");
+  });
+
+  it("should reject known development or placeholder APP_SECRET in production", async () => {
+    const { getRequiredInProduction } = await import("../lib/env");
+    expect(() => {
+      getRequiredInProduction("APP_SECRET", "dev-fallback", {
+        NODE_ENV: "production",
+        APP_SECRET: "q-farming-secret-key-for-auth-tokens-32chars",
+      });
+    }).toThrow("Production configuration error: APP_SECRET cannot use default or placeholder values in production");
+
+    expect(() => {
+      getRequiredInProduction("APP_SECRET", "dev-fallback", {
+        NODE_ENV: "production",
+        APP_SECRET: "change-me-to-a-very-long-production-key-here",
+      });
+    }).toThrow("Production configuration error: APP_SECRET cannot use default or placeholder values in production");
+  });
+
+  it("should accept valid APP_SECRET in production without fallback", async () => {
+    const { getRequiredInProduction } = await import("../lib/env");
+    const secret = getRequiredInProduction("APP_SECRET", "dev-fallback", {
+      NODE_ENV: "production",
+      APP_SECRET: "my-super-secret-production-key-value",
+    });
+    expect(secret).toBe("my-super-secret-production-key-value");
+  });
+
+  it("should allow development fallback when not in production", async () => {
+    const { getRequiredInProduction } = await import("../lib/env");
+    const secret = getRequiredInProduction("APP_SECRET", "dev-fallback-secret", {
+      NODE_ENV: "development",
+      APP_SECRET: "",
+    });
+    expect(secret).toBe("dev-fallback-secret");
+  });
+
+  it("should throw a configuration error if DATABASE_URL is missing in production", async () => {
+    const { validateProductionDatabaseUrl } = await import("../lib/env");
+    expect(() => {
+      validateProductionDatabaseUrl({
+        NODE_ENV: "production",
+        DATABASE_URL: "",
+      });
+    }).toThrow("Production configuration error: DATABASE_URL is required but not configured");
+  });
+
+  it("should throw a configuration error if DATABASE_URL is commented out in production", async () => {
+    const { validateProductionDatabaseUrl } = await import("../lib/env");
+    expect(() => {
+      validateProductionDatabaseUrl({
+        NODE_ENV: "production",
+        DATABASE_URL: "# mysql://user:pass@localhost:3306/db",
+      });
+    }).toThrow("Production configuration error: DATABASE_URL is required but not configured");
+  });
+});

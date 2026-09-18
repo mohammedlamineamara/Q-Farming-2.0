@@ -21,6 +21,7 @@ export interface Translations {
   nav: {
     dashboard: string;
     fields: string;
+    agriculture?: string;
     inventory: string;
     sensors: string;
     workers: string;

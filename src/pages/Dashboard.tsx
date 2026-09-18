@@ -2,18 +2,16 @@ import { trpc } from "@/providers/trpc";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useI18n } from "@/i18n";
+import { WeatherWidget } from "@/components/weather/WeatherWidget";
 import {
   Sprout,
   Droplets,
-  Sun,
   TrendingUp,
   Activity,
   Radio,
   Zap,
   ArrowUpRight,
   ArrowDownRight,
-  Wind,
-  Eye,
 } from "lucide-react";
 
 export default function Dashboard() {
@@ -70,13 +68,6 @@ export default function Dashboard() {
     { icon: Zap, label: t("dashboard.applyFertilizer"), sub: t("dashboard.applyFertilizerSub"), color: "amber" },
     { icon: Sprout, label: t("dashboard.logHarvest"), sub: t("dashboard.logHarvestSub"), color: "emerald" },
     { icon: Activity, label: t("dashboard.setAlert"), sub: t("dashboard.setAlertSub"), color: "red" },
-  ];
-
-  const weatherForecast = [
-    { day: t("dashboard.tomorrow"), icon: "🌤️", temp: "34°C" },
-    { day: t("dashboard.wed"), icon: "⛅", temp: "31°C" },
-    { day: t("dashboard.thu"), icon: "🌧️", temp: "28°C" },
-    { day: t("dashboard.fri"), icon: "☀️", temp: "33°C" },
   ];
 
   return (
@@ -229,40 +220,7 @@ export default function Dashboard() {
         </Card>
 
         {/* Weather Widget */}
-        <Card className="bg-white dark:bg-slate-900/60 border border-slate-200/80 dark:border-white/10 backdrop-blur-xl shadow-xs">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base font-semibold flex items-center gap-2 text-slate-900 dark:text-white">
-              <Sun className="w-5 h-5 text-amber-500 dark:text-amber-400" />
-              {t("dashboard.weatherForecast")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center gap-4 p-4 rounded-xl bg-slate-50/80 dark:bg-white/5 border border-slate-200/70 dark:border-white/5">
-              <span className="text-5xl">☀️</span>
-              <div className="flex-1">
-                <div className="text-3xl font-bold text-slate-900 dark:text-white">32°C</div>
-                <div className="text-sm font-medium text-slate-600 dark:text-slate-300">{t("nav.algiersRegion")}</div>
-                <div className="flex flex-wrap gap-4 mt-2 text-xs text-slate-500 dark:text-slate-400 font-medium">
-                  <span className="flex items-center gap-1"><Droplets className="w-3.5 h-3.5 text-blue-500" /> {t("nav.humidity")}</span>
-                  <span className="flex items-center gap-1"><Wind className="w-3.5 h-3.5 text-cyan-500" /> {t("nav.wind")}</span>
-                  <span className="flex items-center gap-1"><Eye className="w-3.5 h-3.5 text-slate-400" /> 10 km</span>
-                </div>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              {weatherForecast.map((day) => (
-                <div
-                  key={day.day}
-                  className="flex-1 text-center p-3 rounded-xl bg-slate-50/80 dark:bg-white/5 border border-slate-200/70 dark:border-white/5 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
-                >
-                  <div className="text-2xl mb-1">{day.icon}</div>
-                  <div className="text-xs font-medium text-slate-500 dark:text-slate-400">{day.day}</div>
-                  <div className="text-sm font-bold text-slate-800 dark:text-slate-200 mt-1">{day.temp}</div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <WeatherWidget />
       </div>
 
       {/* Sensor Summary */}

@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
@@ -72,6 +73,8 @@ export default function SettingsPage() {
   });
 
   const [prevSettingsData, setPrevSettingsData] = useState<typeof settingsData>(undefined);
+  const [isEditingLocation, setIsEditingLocation] = useState(false);
+  const [locationInput, setLocationInput] = useState("");
   if (settingsData !== prevSettingsData) {
     setPrevSettingsData(settingsData);
     if (settingsData) {
@@ -84,8 +87,20 @@ export default function SettingsPage() {
         predictiveAnalytics: settingsData.predictiveAnalytics,
         farmLocation: settingsData.farmLocation,
       });
+      setLocationInput(settingsData.farmLocation || "Algiers, Algeria");
     }
   }
+
+  const handleSaveLocation = () => {
+    if (!locationInput.trim()) return;
+    setLocalSettings((prev) => ({ ...prev, farmLocation: locationInput.trim() }));
+    updateSettings.mutate({ farmLocation: locationInput.trim() }, {
+      onSuccess: () => {
+        setIsEditingLocation(false);
+        (utils as unknown as { weather?: { get?: { invalidate?: () => void } } }).weather?.get?.invalidate?.();
+      }
+    });
+  };
 
   const handleToggle = (key: string, value: boolean) => {
     const newSettings = { ...localSettings, [key]: value };
@@ -318,14 +333,51 @@ export default function SettingsPage() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex items-center justify-between py-2">
-            <div>
-              <Label className="text-slate-900 dark:text-white font-medium text-sm">{t("settings.primaryLocation")}</Label>
-              <p className="text-xs text-slate-500 dark:text-slate-400">{localSettings.farmLocation}</p>
-            </div>
-            <Button variant="outline" size="sm" className="border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 cursor-pointer">
-              {t("settings.updateGps")}
-            </Button>
+          <div className="py-2">
+            {isEditingLocation ? (
+              <div className="space-y-2">
+                <Label className="text-slate-900 dark:text-white font-medium text-sm">{t("settings.primaryLocation")}</Label>
+                <div className="flex gap-2">
+                  <Input
+                    value={locationInput}
+                    onChange={(e) => setLocationInput(e.target.value)}
+                    placeholder="e.g. Algiers, Biskra, Oran, or 36.75, 3.05"
+                    className="text-sm"
+                  />
+                  <Button size="sm" onClick={handleSaveLocation} disabled={updateSettings.isPending} className="bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer">
+                    {t("common.save")}
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={() => setIsEditingLocation(false)} className="cursor-pointer">
+                    {t("common.cancel")}
+                  </Button>
+                </div>
+                <p className="text-[11px] text-slate-400">
+                  {language === "ar"
+                    ? "أدخل اسم الولاية (مثلاً: بسكرة، وهران، الجزائر) أو الإحداثيات الجغرافية لتحديث الطقس المباشر."
+                    : language === "fr"
+                    ? "Entrez le nom de la wilaya ou les coordonnées GPS pour la météo en direct."
+                    : "Enter an Algerian wilaya name or GPS coordinates (lat, lon) for live forecasts."}
+                </p>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="text-slate-900 dark:text-white font-medium text-sm">{t("settings.primaryLocation")}</Label>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{localSettings.farmLocation}</p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setLocationInput(localSettings.farmLocation);
+                    setIsEditingLocation(true);
+                  }}
+                  className="border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 cursor-pointer"
+                >
+                  {t("settings.updateGps")}
+                </Button>
+              </div>
+            )}
           </div>
           <div className="flex items-center justify-between py-2 border-t border-slate-200/80 dark:border-white/5">
             <div>

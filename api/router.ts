@@ -10,6 +10,8 @@ import { calendarRouter } from "./routers/calendar";
 import { notificationsRouter } from "./routers/notifications";
 import { settingsRouter } from "./routers/settings";
 import { analyticsRouter } from "./routers/analytics";
+import { weatherRouter } from "./routers/weather";
+import { agricultureRouter } from "./routers/agriculture";
 
 export const appRouter = createRouter({
   ping: publicQuery.query(() => ({ ok: true, ts: Date.now() })),
@@ -24,6 +26,8 @@ export const appRouter = createRouter({
   notifications: notificationsRouter,
   settings: settingsRouter,
   analytics: analyticsRouter,
+  weather: weatherRouter,
+  agriculture: agricultureRouter,
 });
 
 export type AppRouter = typeof appRouter;

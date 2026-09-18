@@ -12,6 +12,7 @@ export const fr: Translations = {
   nav: {
     dashboard: "Tableau de Bord",
     fields: "Parcelles & Cultures",
+    agriculture: "Connaissances Agricoles",
     inventory: "Inventaire & Ressources",
     sensors: "Capteurs IoT",
     workers: "Équipe & Ouvriers",

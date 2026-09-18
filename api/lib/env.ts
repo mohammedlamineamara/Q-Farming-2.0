@@ -12,15 +12,82 @@ function getEnv(name: string, fallback = ""): string {
 
 const isProduction = process.env.NODE_ENV === "production";
 
-function getRequiredInProduction(name: string, devFallback: string): string {
-  const value = process.env[name];
-  if (isProduction) {
+const KNOWN_DEV_OR_PLACEHOLDER_SECRETS = new Set([
+  "q-farming-secret-key-for-auth-tokens-32chars",
+  "change-me",
+  "default-secret",
+  "placeholder",
+  "your-secret-key-here",
+  "your-secret-key-at-least-32-chars-long",
+  "12345678901234567890123456789012",
+]);
+
+export function validateAppSecret(
+  customEnv?: Record<string, string | undefined>,
+  devFallback: string = "q-farming-secret-key-for-auth-tokens-32chars"
+): string {
+  const envSource = customEnv || process.env;
+  const isProd = (customEnv ? customEnv.NODE_ENV : process.env.NODE_ENV) === "production";
+  const raw = envSource.APP_SECRET;
+
+  if (isProd) {
+    if (!raw || !raw.trim()) {
+      throw new Error("Production configuration error: APP_SECRET is required but not configured");
+    }
+    const trimmed = raw.trim();
+    if (trimmed.length < 32) {
+      throw new Error("Production configuration error: APP_SECRET must be at least 32 characters in production");
+    }
+    const lower = trimmed.toLowerCase();
+    if (
+      KNOWN_DEV_OR_PLACEHOLDER_SECRETS.has(lower) ||
+      lower.includes("change-me") ||
+      lower.includes("placeholder")
+    ) {
+      throw new Error("Production configuration error: APP_SECRET cannot use default or placeholder values in production");
+    }
+    return trimmed;
+  }
+
+  return raw?.trim() || devFallback;
+}
+
+export function getRequiredInProduction(
+  name: string,
+  devFallback: string,
+  customEnv?: Record<string, string | undefined>
+): string {
+  if (name === "APP_SECRET") {
+    return validateAppSecret(customEnv, devFallback);
+  }
+  const envSource = customEnv || process.env;
+  const isProd = (customEnv ? customEnv.NODE_ENV : process.env.NODE_ENV) === "production";
+  const value = envSource[name];
+  if (isProd) {
     if (!value || !value.trim()) {
       throw new Error(`Production configuration error: ${name} is required but not configured`);
     }
     return value.trim();
   }
   return value?.trim() || devFallback;
+}
+
+export function validateProductionDatabaseUrl(
+  customEnv?: Record<string, string | undefined>
+): string {
+  const envSource = customEnv || process.env;
+  const isProd = (customEnv ? customEnv.NODE_ENV : process.env.NODE_ENV) === "production";
+  const raw = envSource.DATABASE_URL?.trim();
+  if (isProd) {
+    if (!raw || raw.startsWith("#")) {
+      throw new Error("Production configuration error: DATABASE_URL is required but not configured");
+    }
+    return raw;
+  }
+  if (!raw || raw.startsWith("#")) {
+    return "";
+  }
+  return raw;
 }
 
 function getSanitizedDatabaseUrl(): string {

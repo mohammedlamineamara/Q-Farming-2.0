@@ -32,6 +32,7 @@ import {
 const sidebarNavItems = [
   { icon: LayoutDashboard, key: "nav.dashboard", path: "/" },
   { icon: Tractor, key: "nav.fields", path: "/fields" },
+  { icon: Sprout, key: "nav.agriculture", path: "/agriculture" },
   { icon: Package, key: "nav.inventory", path: "/inventory" },
   { icon: Radio, key: "nav.sensors", path: "/sensors" },
   { icon: Users, key: "nav.workers", path: "/workers" },

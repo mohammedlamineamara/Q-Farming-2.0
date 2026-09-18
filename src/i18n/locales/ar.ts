@@ -12,6 +12,7 @@ export const ar: Translations = {
   nav: {
     dashboard: "لوحة التحكم",
     fields: "الحقول والمحاصيل",
+    agriculture: "المعرفة الزراعية",
     inventory: "المخزون والموارد",
     sensors: "أجهزة الاستشعار",
     workers: "فريق العمل",

@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import { trpc } from "@/providers/trpc";
+import { getCropDetailUrl } from "@/lib/cropLinking";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -235,7 +237,20 @@ export default function Fields() {
               <div className="flex gap-4 text-xs text-slate-600 dark:text-slate-400 mb-3 font-medium">
                 <span className="flex items-center gap-1"><MapPin className="w-3 h-3 text-slate-400" /> {field.location}</span>
                 <span className="flex items-center gap-1"><Ruler className="w-3 h-3 text-slate-400" /> {field.size} {t("common.ha")}</span>
-                <span className="flex items-center gap-1"><Sprout className="w-3 h-3 text-emerald-500" /> {field.crop}</span>
+                <span className="flex items-center gap-1">
+                  <Sprout className="w-3 h-3 text-emerald-500" />
+                  {getCropDetailUrl(field.crop) ? (
+                    <Link
+                      to={getCropDetailUrl(field.crop)!}
+                      className="hover:underline text-emerald-600 dark:text-emerald-400 font-semibold"
+                      title="View Agronomic Guide"
+                    >
+                      {field.crop}
+                    </Link>
+                  ) : (
+                    <span>{field.crop}</span>
+                  )}
+                </span>
               </div>
               <div className="flex gap-2 mb-3">
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1 font-medium">

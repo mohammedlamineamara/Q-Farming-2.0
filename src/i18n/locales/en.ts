@@ -12,6 +12,7 @@ export const en: Translations = {
   nav: {
     dashboard: "Dashboard",
     fields: "Fields",
+    agriculture: "Agriculture",
     inventory: "Inventory",
     sensors: "IoT Sensors",
     workers: "Workers",
