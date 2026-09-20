@@ -13,3 +13,7 @@ report.txt
 .env.*
 !.env.example
 cookies.txt
+
+# Track Drizzle migrations
+!drizzle/
+!drizzle/*.sql

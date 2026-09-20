@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 
 dotenv.config({
   path: "./.env",
-  override: true,
+  override: process.env.NODE_ENV !== "test",
 });
 
 function getEnv(name: string, fallback = ""): string {
