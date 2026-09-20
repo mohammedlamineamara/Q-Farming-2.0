@@ -162,7 +162,8 @@ export function createOAuthCallbackHandler() {
         unionId: userId,
         name: userProfile.name,
         avatar: userProfile.avatar_url,
-        password: "temp123",
+        password: null,
+        authProvider: "kimi",
         lastSignInAt: new Date(),
       });
 

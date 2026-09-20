@@ -42,6 +42,14 @@ describe("Database Schema Hardening (Phase 4C)", () => {
   it("enforces 1:1 user settings uniqueness", () => {
     expect((schema.settings.userId as any).isUnique).toBe(true);
   });
+
+  it("supports Phase 4 Option B authProvider enum and nullable password", () => {
+    expect(schema.users.password.notNull).toBe(false);
+    expect(schema.users.authProvider).toBeDefined();
+    expect(schema.users.authProvider.notNull).toBe(true);
+    expect(schema.users.authProvider.default).toBe("local");
+    expect(schema.users.authProvider.enumValues).toEqual(["local", "kimi"]);
+  });
 });
 
 describe("Database Connection Safety (Phase 4C)", () => {

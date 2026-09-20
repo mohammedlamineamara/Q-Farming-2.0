@@ -44,6 +44,7 @@ export const authRouter = createRouter({
         name: input.name,
         email: input.email,
         password: passwordHash,
+        authProvider: "local",
         role: "worker",
       });
 
@@ -66,6 +67,18 @@ export const authRouter = createRouter({
       const user = await findUserByEmail(input.email);
 
       if (!user) {
+        rateLimiter.recordFailure(clientId, AUTH_RATE_LIMIT_CONFIGS.login);
+        throw new Error("Invalid email or password");
+      }
+
+      // Kimi accounts and accounts without a valid local password cannot authenticate through local login
+      const provider = user.authProvider || (user.password ? "local" : "kimi");
+      if (
+        provider !== "local" ||
+        !user.password ||
+        typeof user.password !== "string" ||
+        user.password.trim() === ""
+      ) {
         rateLimiter.recordFailure(clientId, AUTH_RATE_LIMIT_CONFIGS.login);
         throw new Error("Invalid email or password");
       }
@@ -108,6 +121,7 @@ export const authRouter = createRouter({
           name: user.name,
           email: user.email,
           role: user.role,
+          authProvider: user.authProvider,
         },
       };
     }),

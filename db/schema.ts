@@ -23,7 +23,13 @@ export const users = mysqlTable(
     name: varchar("name", { length: 255 }),
     avatar: text("avatar"),
     email: varchar("email", { length: 320 }),
-    password: varchar("password", { length: 255 }).notNull(),
+    password: varchar("password", { length: 255 }),
+    authProvider: mysqlEnum("authProvider", [
+      "local",
+      "kimi",
+    ])
+      .default("local")
+      .notNull(),
     role: mysqlEnum("role", [
       "admin",
       "farm_manager",
